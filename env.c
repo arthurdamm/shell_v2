@@ -1,4 +1,4 @@
-#include "shell.h"
+#include "hsh.h"
 
 /**
  * _myenv - prints the current environment
