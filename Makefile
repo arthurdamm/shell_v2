@@ -1,0 +1,20 @@
+CC = gcc
+CFLAGS = -Wall -Werror -Wextra -pedantic
+SRC = *.c *.h
+OBJ = $(SRC:.c=.o)
+NAME = hsh
+
+.PHONY: all clean oclean flcean re
+
+all: hsh.h $(OBJ)
+	$(CC) $(OBJ) -o $(NAME)
+
+clean:
+	$(RM) *~ $(NAME)
+
+oclean:
+	$(RM) $(OBJ)
+
+fclean: clean oclean
+
+re: oclean all
