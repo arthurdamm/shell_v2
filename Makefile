@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Werror -Wextra -pedantic
-SRC = *.c *.h
+SRC = $(wildcard *.c)
 OBJ = $(SRC:.c=.o)
 NAME = hsh
 
