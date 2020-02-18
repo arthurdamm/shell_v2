@@ -72,3 +72,21 @@ char *_strchr(char *s, char c)
 
 	return (NULL);
 }
+
+/**
+ * _strchrlast - locates last matching character in str
+ * @s: the string to be parsed
+ * @c: the character to look for
+ * Return: address of matching character
+ */
+char *_strchrlast(char *s, char c)
+{
+	char *ret = NULL, *p;
+
+	while ((p = _strchr(s, c)))
+	{
+		ret = p;
+		s = p + 1;
+	}
+	return (ret);
+}
