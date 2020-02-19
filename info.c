@@ -10,6 +10,9 @@ void clear_info(info_t *info)
 	info->argv = NULL;
 	info->path = NULL;
 	info->argc = 0;
+	info->right_redirect_from_fd = 1;
+	info->right_redirect_to_fd = -1;
+	info->right_append = 0;
 }
 
 /**

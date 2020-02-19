@@ -7,16 +7,18 @@
  */
 void parse_redirect(info_t *info)
 {
-	char *p = _strchrlast(info->arg, '>');
+	char *p = _strchrlast(info->arg, '>'), *file;
 	int fd;
 
 	if (!p) /* no redirect */
 		return;
 
-	fd = open_redirect(info, p + 1);
-	if (fd == -1)
-		return;
-	info->right_redirect_to_fd = fd;
+	file = p + 1;
+	if (p > info->arg && *(p - 1) == '>')
+	{
+		info->right_append = 1;
+		p--;
+	}
 	if (p > info->arg) /* if not start of string */
 	{
 		/* check if previous char is digit */
@@ -26,6 +28,13 @@ void parse_redirect(info_t *info)
 			info->right_redirect_from_fd = *p - '0';
 		}
 	}
+	fd = open_redirect(info, file);
+	if (fd == -1)
+	{
+		/* TODO: print message, set status, etc? */
+		return;
+	}
+	info->right_redirect_to_fd = fd;
 	*p = 0; /* insert null char to cut string b4 > */
 }
 
@@ -46,7 +55,8 @@ int open_redirect(info_t *info, char *file)
 		print_error_noarg(info, "Syntax error: newline unexpected\n");
 		return (-1);
 	}
-	fd = open(file, O_CREAT | O_TRUNC | O_RDWR, 0644);
+	fd = open(file, O_CREAT | O_RDWR |
+		(info->right_append ? O_APPEND : O_TRUNC), 0644);
 	if (fd == -1)
 	{
 		char buf[256];
