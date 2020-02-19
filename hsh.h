@@ -73,6 +73,7 @@ typedef struct liststr
  * @histcount: the history line number count
  * @right_redirect_from_fd: fd right redirecting from (default 1)
  * @right_redirect_to_fd: fd right redirecting to
+ * @right_append: true if right stream appends
  */
 typedef struct passinfo
 {
@@ -98,11 +99,12 @@ typedef struct passinfo
 
 	int right_redirect_from_fd;
 	int right_redirect_to_fd;
+	int right_append;
 } info_t;
 
 #define INFO_INIT \
 {NULL, NULL, NULL, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, \
-	0, 0, 0, 1, -1}
+	0, 0, 0, 1, -1, 0}
 
 /**
  *struct builtin - contains a builtin string and related function
@@ -174,7 +176,6 @@ int _atoi(char *);
 
 /* more_functions2.c */
 int _erratoi(char *);
-void print_error(info_t *, char *);
 int print_d(int, int);
 char *convert_number(long int, int, int);
 void remove_comments(char *);
@@ -242,5 +243,9 @@ int replace_string(char **, char *);
 /* redirect.c */
 void parse_redirect(info_t *info);
 int open_redirect(info_t *info, char *file);
+
+/* error.c */
+void print_error(info_t *, char *);
+void print_error_noarg(info_t *info, char *estr);
 
 #endif

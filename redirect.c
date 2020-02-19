@@ -43,8 +43,7 @@ int open_redirect(info_t *info, char *file)
 		file++;
 	if (!*file)
 	{
-		/* TODO: print error */
-		print_error(info, "Syntax error: newline unexpected\n");
+		print_error_noarg(info, "Syntax error: newline unexpected\n");
 		return (-1);
 	}
 	fd = open(file, O_CREAT | O_TRUNC | O_RDWR, 0644);
@@ -54,7 +53,7 @@ int open_redirect(info_t *info, char *file)
 
 		buf[0] = 0;
 		sprintf(buf, "Cannot create %s: Permission denied\n", file);
-		print_error(info, buf);
+		print_error_noarg(info, buf);
 	}
 	return (fd);
 }
