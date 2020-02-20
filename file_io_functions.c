@@ -36,7 +36,7 @@ int write_history(info_t *info)
 	char *filename = get_history_file(info);
 	list_t *node = NULL;
 
-	printf("WRITE HISTORY(): [%s]\n", filename);
+	/* printf("WRITE HISTORY(): [%s]\n", filename); */
 	if (!filename)
 		return (-1);
 

@@ -138,6 +138,14 @@ void fork_cmd(info_t *info)
 	}
 	if (child_pid == 0)
 	{
+		if (info->right_redirect_to_fd > -1)
+		{
+			if (dup2(info->right_redirect_to_fd, info->right_redirect_from_fd) == -1)
+			{
+				/* TODO: error msg? */
+				exit(1);
+			}
+		}
 		if (execve(info->path, info->argv, get_environ(info)) == -1)
 		{
 			free_info(info, 1);
