@@ -122,6 +122,13 @@ int is_cmd(info_t *, char *);
 char *dup_chars(char *, int, int);
 char *find_path(info_t *, char *, char *);
 
+/* help_1.c */
+int help_info(info_t *info);
+void help_cd(void);
+void help_exit(void);
+void help_help(void);
+void help_history(void);
+
 /* loophsh.c */
 int loophsh(char **);
 
