@@ -97,6 +97,9 @@ typedef struct passinfo
 	int readfd;
 	int histcount;
 
+	int left_redirect_from_fd;
+	int left_append;
+
 	int right_redirect_from_fd;
 	int right_redirect_to_fd;
 	int right_append;
@@ -106,7 +109,7 @@ typedef struct passinfo
 
 #define INFO_INIT \
 {NULL, NULL, NULL, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, \
-	0, 0, 0, 1, -1, 0, NULL}
+	0, 0, 0, -1, 0, 1, -1, 0, NULL}
 
 /**
  *struct builtin - contains a builtin string and related function
@@ -256,8 +259,9 @@ int replace_vars(info_t *);
 int replace_string(char **, char *);
 
 /* redirect.c */
-void parse_redirect(info_t *info);
-int open_redirect(info_t *info, char *file);
+void parse_left_redirect(info_t *info);
+void parse_right_redirect(info_t *info);
+int open_redirect(info_t *info, char *file, int left);
 
 /* error.c */
 void print_error(info_t *, char *);

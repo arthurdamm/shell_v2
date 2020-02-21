@@ -10,6 +10,8 @@ void clear_info(info_t *info)
 	info->argv = NULL;
 	info->path = NULL;
 	info->argc = 0;
+	info->left_redirect_from_fd = -1;
+	info->left_append = 0;
 	info->right_redirect_from_fd = 1;
 	info->right_redirect_to_fd = -1;
 	info->right_append = 0;
@@ -27,7 +29,8 @@ void set_info(info_t *info, char **av)
 	info->fname = av[0];
 	if (info->arg)
 	{
-		parse_redirect(info);
+		parse_left_redirect(info);
+		parse_right_redirect(info);
 		info->argv = strtow(info->arg, " \t");
 		if (!info->argv)
 		{
@@ -58,6 +61,11 @@ void free_info(info_t *info, int all)
 	ffree(info->argv);
 	info->argv = NULL;
 	info->path = NULL;
+	if (info->left_redirect_from_fd > 2)
+	{
+		close(info->left_redirect_from_fd);
+		info->left_redirect_from_fd = -1;
+	}
 	if (info->right_redirect_to_fd > 2)
 	{
 		close(info->right_redirect_to_fd);
