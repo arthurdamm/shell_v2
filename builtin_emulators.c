@@ -83,15 +83,82 @@ int _mycd(info_t *info)
  * _myhelp - changes the current directory of the process
  * @info: Structure containing potential arguments. Used to maintain
  *          constant function prototype.
- *  Return: Always 0
+ *  Return: 0 on success, 1 on failure
  */
 int _myhelp(info_t *info)
 {
-	char **arg_array;
+	char **arg;
+	char *builtin;
 
-	arg_array = info->argv;
-	_puts("help call works. Function not yet implemented \n");
-	if (0)
-		_puts(*arg_array); /* temp att_unused workaround */
+	arg = info->argv;
+	if (arg[1] == NULL)
+	{
+		help();
+		return (0);
+	}
+
+	builtin = help_flag_check(info, arg);
+
+	if (_strcmp(builtin, "alias") == 0)
+		help_alias(info);
+	else if (_strcmp(builtin, "cd") == 0)
+		help_cd(info);
+	else if (_strcmp(builtin, "echo") == 0)
+		help_echo(info);
+	else if (_strcmp(builtin, "exit") == 0)
+		help_exit(info);
+	else if (_strcmp(builtin, "help") == 0)
+		help_help(info);
+	else if (_strcmp(builtin, "history") == 0)
+		help_history(info);
+	else if (_strcmp(builtin, "pwd") == 0)
+		help_pwd(info);
+	else
+	{
+		printf("-bash: help: no help topics match `%s'.", builtin);
+		printf("  Try `help help' or `man -k %s' or `info %s'.\n", arg[1], arg[1]);
+		info->status = 1;
+		return (1);
+	}
+	info->status = 0;
 	return (0);
+}
+
+/**
+ * help_flag_check - checks if there is valid flag on help built-in
+ * @info: struct containing commands from line
+ * @arg: arguments entered when using help
+ * Return: builtin to search for
+ */
+char *help_flag_check(info_t *info, char **arg)
+{
+	char *builtin = arg[1];
+	int i = 1;
+
+	while (_strcmp(arg[i], "-s") == 0)
+	{
+		info->help = "s";
+		if (arg[i + 1] != NULL)
+			builtin = arg[i + 1];
+		else
+		{
+			help();
+			return (NULL);
+		}
+		i++;
+	}
+	i = 1;
+	while (_strcmp(arg[i], "-d") == 0)
+	{
+		info->help = "d";
+		if (arg[i + 1] != NULL)
+			builtin = arg[i + 1];
+		else
+		{
+			help();
+			return (NULL);
+		}
+		i++;
+	}
+	return (builtin);
 }

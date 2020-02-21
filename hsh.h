@@ -53,24 +53,27 @@ typedef struct liststr
 /**
  *struct passinfo - contains pseudo-arguements to pass into a function,
  *					allowing uniform prototype for function pointer struct
- *@arg: a string generated from getline containing arguements
- *@argv: an array of strings generated from arg
- *@path: a string path for the current command
- *@argc: the argument count
- *@line_count: the error count
- *@err_num: the error code for exit()s
- *@linecount_flag: if on count this line of input
- *@fname: the program filename
- *@env: linked list local copy of environ
- *@environ: custom modified copy of environ from LL env
- *@history: the history node
- *@alias: the alias node
- *@env_changed: on if environ was changed
- *@status: the return status of the last exec'd command
- *@cmd_buf: address of pointer to cmd_buf, on if chaining
- *@cmd_buf_type: CMD_type ||, &&, ;
- *@readfd: the fd from which to read line input
- *@histcount: the history line number count
+ * @arg: a string generated from getline containing arguements
+ * @argv: an array of strings generated from arg
+ * @path: a string path for the current command
+ * @argc: the argument count
+ * @line_count: the error count
+ * @err_num: the error code for exit()s
+ * @linecount_flag: if on count this line of input
+ * @fname: the program filename
+ * @env: linked list local copy of environ
+ * @environ: custom modified copy of environ from LL env
+ * @history: the history node
+ * @alias: the alias node
+ * @env_changed: on if environ was changed
+ * @status: the return status of the last exec'd command
+ * @cmd_buf: address of pointer to cmd_buf, on if chaining
+ * @cmd_buf_type: CMD_type ||, &&, ;
+ * @readfd: the fd from which to read line input
+ * @histcount: the history line number count
+ * @right_redirect_from_fd: fd right redirecting from (default 1)
+ * @right_redirect_to_fd: fd right redirecting to
+ * @right_append: true if right stream appends
  */
 typedef struct passinfo
 {
@@ -93,11 +96,17 @@ typedef struct passinfo
 	int cmd_buf_type; /* CMD_type ||, &&, ; */
 	int readfd;
 	int histcount;
+
+	int right_redirect_from_fd;
+	int right_redirect_to_fd;
+	int right_append;
+
+	char *help;
 } info_t;
 
 #define INFO_INIT \
 {NULL, NULL, NULL, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, \
-	0, 0, 0}
+	0, 0, 0, 1, -1, 0, NULL}
 
 /**
  *struct builtin - contains a builtin string and related function
@@ -121,6 +130,18 @@ void fork_cmd(info_t *);
 int is_cmd(info_t *, char *);
 char *dup_chars(char *, int, int);
 char *find_path(info_t *, char *, char *);
+
+/* help.c */
+void help(void);
+void help_cd(info_t *);
+void help_exit(info_t *);
+void help_help(info_t *);
+void help_history(info_t *);
+
+/* help_2.c */
+void help_alias(info_t *);
+void help_echo(info_t *);
+void help_pwd(info_t *);
 
 /* loophsh.c */
 int loophsh(char **);
@@ -147,6 +168,7 @@ int _putchar(char);
 char *_strncpy(char *, char *, int);
 char *_strncat(char *, char *, int);
 char *_strchr(char *, char);
+char *_strchrlast(char *s, char c);
 
 /* string_functions4.c */
 char **strtow(char *, char *);
@@ -168,7 +190,6 @@ int _atoi(char *);
 
 /* more_functions2.c */
 int _erratoi(char *);
-void print_error(info_t *, char *);
 int print_d(int, int);
 char *convert_number(long int, int, int);
 void remove_comments(char *);
@@ -177,6 +198,7 @@ void remove_comments(char *);
 int _myexit(info_t *);
 int _mycd(info_t *);
 int _myhelp(info_t *);
+char *help_flag_check(info_t *, char**);
 
 /* builtin_emulators2.c */
 int _myhistory(info_t *);
@@ -191,6 +213,7 @@ void sigintHandler(int);
 void clear_info(info_t *);
 void set_info(info_t *, char **);
 void free_info(info_t *, int);
+void print_info(info_t *info);
 
 /* env.c module */
 char *_getenv(info_t *, const char *);
@@ -231,5 +254,13 @@ void check_chain(info_t *, char *, size_t *, size_t, size_t);
 int replace_alias(info_t *);
 int replace_vars(info_t *);
 int replace_string(char **, char *);
+
+/* redirect.c */
+void parse_redirect(info_t *info);
+int open_redirect(info_t *info, char *file);
+
+/* error.c */
+void print_error(info_t *, char *);
+void print_error_noarg(info_t *info, char *estr);
 
 #endif
