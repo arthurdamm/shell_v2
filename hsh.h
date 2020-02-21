@@ -100,11 +100,13 @@ typedef struct passinfo
 	int right_redirect_from_fd;
 	int right_redirect_to_fd;
 	int right_append;
+
+	char *help;
 } info_t;
 
 #define INFO_INIT \
 {NULL, NULL, NULL, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, \
-	0, 0, 0, 1, -1, 0}
+	0, 0, 0, 1, -1, 0, NULL}
 
 /**
  *struct builtin - contains a builtin string and related function
@@ -129,12 +131,17 @@ int is_cmd(info_t *, char *);
 char *dup_chars(char *, int, int);
 char *find_path(info_t *, char *, char *);
 
-/* help_1.c */
-int help_info(info_t *info);
-void help_cd(void);
-void help_exit(void);
-void help_help(void);
-void help_history(void);
+/* help.c */
+void help(void);
+void help_cd(info_t *);
+void help_exit(info_t *);
+void help_help(info_t *);
+void help_history(info_t *);
+
+/* help_2.c */
+void help_alias(info_t *);
+void help_echo(info_t *);
+void help_pwd(info_t *);
 
 /* loophsh.c */
 int loophsh(char **);
@@ -191,6 +198,7 @@ void remove_comments(char *);
 int _myexit(info_t *);
 int _mycd(info_t *);
 int _myhelp(info_t *);
+char *help_flag_check(info_t *, char**);
 
 /* builtin_emulators2.c */
 int _myhistory(info_t *);

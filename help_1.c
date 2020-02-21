@@ -2,60 +2,46 @@
 
 /**
  * help_info - returns information about args
- * @info: struct with arguments
  * Return: 0 on success
  */
-int help_info(info_t *info)
+void help(void)
 {
-	char **arg;
+	printf("GNU bash, version 4.3.11(1)-release (x86_64-pc-linux-gnu)\n"
+	"These shell commands are defined internally.  Type `help' to see this list.\n"
+	"Type `help name' to find out more about the function `name'.\n"
+	"Use `info bash' to find out more about the shell in general.\n"
+	"Use `man -k' or `info' to find out more about commands not in this list.\n\n"
 
-	arg = info->argv;
-
-	if (arg[1] == NULL)
-		return (1);
-
-	if (_strcmp(arg[1], "cd") == 0)
-		help_cd();
-	else if (_strcmp(arg[1], "exit") == 0)
-		help_exit();
-	else if (_strcmp(arg[1], "help") == 0)
-		help_help();
-	else if (_strcmp(arg[1], "history") == 0)
-		help_history();
-	else
-	{
-		printf("-bash: help: no help topics match `%s'.", arg[1]);
-		printf("  Try `help help' or `man -k %s' or `info %s'.\n", arg[1], arg[1]);
-		return (1);
-	}
-	return (0);
+	"A star (*) next to a name means that the command is disabled.\n");
 }
 
 /**
  * help_cd - prints help info for cd built-in
+ * @info: struct with flags
  * Return: void
  */
-void help_cd(void)
+void help_cd(info_t *info)
 {
+	if (info->help && _strcmp(info->help, "s") == 0)
+	{
+		printf("cd: cd [-L|[-P [-e]] [-@]] [dir]\n");
+		info->help = NULL;
+		return;
+	}
 	printf("cd: cd [-L|[-P [-e]] [-@]] [dir]\n");
 	printf("    Change the shell working directory.\n\n");
-
 	printf("    Change the current directory to DIR.  ");
-	printf("The default DIR is the value of the\n");
-	printf("    HOME shell variable.\n\n");
-
+	printf("The default DIR is the value of the\n    HOME shell variable.\n\n");
 	printf("    The variable CDPATH defines the search path for the directory ");
 	printf("containing\n    DIR.  Alternative directory names in CDPATH are ");
 	printf("separated by a colon (:).\n");
 	printf("    A null directory name is the same as the current directory.");
 	printf("  If DIR begins\n"
 	"    with a slash (/), then CDPATH is not used.\n\n");
-
 	printf("    If the directory is not found, and the shell option");
 	printf("`cdable_vars' is set,\n    the word is assumed to be  a variable ");
 	printf("name.  ");
 	printf("If that variable has a value,\n    its value is used for DIR.\n\n");
-
 	printf("    Options:\n"
 	"        -L\tforce symbolic links to be followed: resolve symbolic links in\n"
 	"        DIR after processing instances of `..'\n");
@@ -68,12 +54,10 @@ void help_cd(void)
 	printf("        -@  on systems that support it, present a file with ");
 	printf("extended attributes\n"
 	"            as a directory containing the file attributes\n\n");
-
 	printf("    The default is to follow symbolic links, as if `-L' were ");
 	printf("specified.\n");
 	printf("    `..' is processed by removing the immediately previous pathname");
 	printf(" component\n    back to a slash or the beginning of DIR.\n\n");
-
 	printf("    Exit Status:\n");
 	printf("    Returns 0 if the directory is changed, and if $PWD is set ");
 	printf("successfully when\n    -P is used; non-zero otherwise.\n");
@@ -81,22 +65,36 @@ void help_cd(void)
 
 /**
  * help_exit - prints help for exit built-in
+ * @info: struct with flags
  * Return: void
  */
-void help_exit(void)
+void help_exit(info_t *info)
 {
-		printf("exit: exit [n]\n    Exit the shell.\n\n");
-		printf("\n    Exits the shell with a status of N. ");
-		printf("If N is omitted, the exit status\n");
-		printf("    that of the last arg executed.\n");
+	if (info->help && _strcmp(info->help, "s") == 0)
+	{
+		printf("exit: exit [n]\n");
+		info->help = NULL;
+		return;
+	}
+	printf("exit: exit [n]\n    Exit the shell.\n\n");
+	printf("\n    Exits the shell with a status of N. ");
+	printf("If N is omitted, the exit status\n");
+	printf("    that of the last arg executed.\n");
 }
 
 /**
  * help_help - prints help for help
+ * @info: struct with command
  * Return: void
  */
-void help_help(void)
+void help_help(info_t *info)
 {
+	if (info->help && _strcmp(info->help, "s") == 0)
+	{
+		printf("help: help [-dms] [pattern ...]\n");
+		info->help = NULL;
+		return;
+	}
 	printf("help: help [-dms] [pattern ...]\n");
 	printf("    Display information about builtin commands.\n\n");
 	printf("    Displays brief summaries of builtin commands.  If PATTERN is\n");
@@ -121,10 +119,18 @@ void help_help(void)
 
 /**
  * help_history - displays help info about history built-in
+ * @info: struct with command
  * Return: void
  */
-void help_history(void)
+void help_history(info_t *info)
 {
+	if (info->help && _strcmp(info->help, "s") == 0)
+	{
+		printf("history: history [-c] [-d offset] [n] or history -anrw ");
+		printf("[filename] or history -ps arg [arg...]\n");
+		info->help = NULL;
+		return;
+	}
 	printf("history: history [-c] [-d offset] [n] or history -anrw [filename] ");
 	printf("or history -ps arg [arg...]\n");
 	printf("    Display or manipulate the history list.\n\n");
@@ -132,11 +138,10 @@ void help_history(void)
 	printf("    Display the history list with line numbers, prefixing each ");
 	printf("modified\n"
 	"    entry with a `*'.  An argument of N lists only the last N entries.\n\n");
-
 	printf("    Options:\n"
 		"      -c\tclear the history list by deleting all of the entries\n"
 		"      -d offset\tdelete the history entry at offset OFFSET.\n\n");
-	printf("      -a\tappend history lines from this session to the history "
+	printf("      -a\tappend history lines from this session to the history ");
 	printf("file\n"
 		"      -n\tread all history lines not already read from the history file\n"
 		"      -r\tread the history file and append the contents to the history\n"
