@@ -87,7 +87,7 @@ int open_redirect(info_t *info, char *file, int left)
 {
 	int fd;
 
-	while (*file == ' ' || *file == '\n')
+	while (*file == ' ' || *file == '\t')
 		file++;
 	if (!*file)
 	{
