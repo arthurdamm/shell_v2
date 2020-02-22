@@ -10,7 +10,11 @@ void clear_info(info_t *info)
 	info->argv = NULL;
 	info->path = NULL;
 	info->argc = 0;
-	info->left_redirect_from_fd = -1;
+	if (info->left_redirect_from_fd != HEREDOC_FD)
+	{
+		/* TODO where else? when to RESET? */
+		info->left_redirect_from_fd = -1;
+	}
 	info->left_append = 0;
 	info->right_redirect_from_fd = 1;
 	info->right_redirect_to_fd = -1;
@@ -31,10 +35,11 @@ void set_info(info_t *info, char **av)
 	{
 		parse_left_redirect(info);
 		parse_right_redirect(info);
-		if (fd == HEREDOC_FD)
+		if (info->left_redirect_from_fd == HEREDOC_FD)
 		{
-			info->heredoc_cmd = _strdup(info->arg);
-			return; /* TODO: return? */
+			if (!info->heredoc_cmd)
+				info->heredoc_cmd = _strdup(info->arg);
+			/* return; TODO: return? */
 		}
 		info->argv = strtow(info->arg, " \t");
 		if (!info->argv)
@@ -86,9 +91,9 @@ void free_info(info_t *info, int all)
 			free_list(&(info->history));
 		if (info->alias)
 			free_list(&(info->alias));
-		bfree(&info->heredoc);
-		bfree(&info->heredoc_txt);
-		bfree(&info->heredoc_cmd);
+		bfree((void **)&info->heredoc);
+		bfree((void **)&info->heredoc_txt);
+		bfree((void **)&info->heredoc_cmd);
 		ffree(info->environ);
 			info->environ = NULL;
 		bfree((void **)info->cmd_buf);

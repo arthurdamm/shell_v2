@@ -98,9 +98,11 @@ int open_redirect(info_t *info, char *file, int left)
 	{
 		if (info->left_append)
 		{
-			info->heredoc = _strdup(file);
+			info->heredoc = malloc(_strlen(file) + 1);
 			if (!info->heredoc)
 				exit(1);
+			_strcpy(info->heredoc, file);
+			_strcat(info->heredoc, "\n");
 			return (HEREDOC_FD);
 		}
 		fd = open(file, O_RDONLY);

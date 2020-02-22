@@ -130,6 +130,7 @@ void find_cmd(info_t *info)
 void fork_cmd(info_t *info)
 {
 	pid_t child_pid;
+	int pipefd[2];
 
 	child_pid = fork();
 	if (child_pid == -1)
@@ -140,7 +141,17 @@ void fork_cmd(info_t *info)
 	}
 	if (child_pid == 0)
 	{
-		if (info->left_redirect_from_fd > -1)
+		if (info->left_redirect_from_fd == HEREDOC_FD)
+		{
+			if (pipe(pipefd) == -1)
+				exit(1);
+			if (dup2(pipefd[0], STDIN_FILENO) == -1)
+				exit(1);
+			write(pipefd[1], info->heredoc_txt, _strlen(info->heredoc_txt));
+			close(pipefd[0]);
+			close(pipefd[1]);
+		}
+		else if (info->left_redirect_from_fd > -1)
 		{
 			if (dup2(info->left_redirect_from_fd, STDIN_FILENO) == -1)
 			{
