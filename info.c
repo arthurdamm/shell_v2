@@ -31,6 +31,11 @@ void set_info(info_t *info, char **av)
 	{
 		parse_left_redirect(info);
 		parse_right_redirect(info);
+		if (fd == HEREDOC_FD)
+		{
+			info->heredoc_cmd = _strdup(info->arg);
+			return; /* TODO: return? */
+		}
 		info->argv = strtow(info->arg, " \t");
 		if (!info->argv)
 		{
@@ -81,6 +86,9 @@ void free_info(info_t *info, int all)
 			free_list(&(info->history));
 		if (info->alias)
 			free_list(&(info->alias));
+		bfree(&info->heredoc);
+		bfree(&info->heredoc_txt);
+		bfree(&info->heredoc_cmd);
 		ffree(info->environ);
 			info->environ = NULL;
 		bfree((void **)info->cmd_buf);

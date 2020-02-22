@@ -34,6 +34,8 @@
 #define HIST_FILE	".simple_shell_history"
 #define HIST_MAX	4096
 
+#define HEREDOC_FD -2 /* set if using HEREDOC */
+
 extern char **environ;
 
 
@@ -74,6 +76,10 @@ typedef struct liststr
  * @right_redirect_from_fd: fd right redirecting from (default 1)
  * @right_redirect_to_fd: fd right redirecting to
  * @right_append: true if right stream appends
+ * @heredoc: value of HEREDOC delimeter
+ * @heredoc_txt: accumulated HEREDOC lines
+ * @heredoc_cmd: the command to pipe HEREDOC line
+ * @help: help flags
  */
 typedef struct passinfo
 {
@@ -104,12 +110,15 @@ typedef struct passinfo
 	int right_redirect_to_fd;
 	int right_append;
 
+	char *heredoc;
+	char *heredoc_txt;
+	char *heredoc_cmd;
 	char *help;
 } info_t;
 
 #define INFO_INIT \
 {NULL, NULL, NULL, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, \
-	0, 0, 0, -1, 0, 1, -1, 0, NULL}
+	0, 0, 0, -1, 0, 1, -1, 0, NULL, NULL, NULL, NULL}
 
 /**
  *struct builtin - contains a builtin string and related function

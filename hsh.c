@@ -67,6 +67,8 @@ int find_builtin(info_t *info)
 		{NULL, NULL}
 	};
 
+	if (info->heredoc)
+		return (0);
 	for (i = 0; builtintbl[i].type; i++)
 		if (_strcmp(info->argv[0], builtintbl[i].type) == 0)
 		{

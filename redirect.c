@@ -95,7 +95,16 @@ int open_redirect(info_t *info, char *file, int left)
 		return (-1);
 	}
 	if (left)
+	{
+		if (info->left_append)
+		{
+			info->heredoc = _strdup(file);
+			if (!info->heredoc)
+				exit(1);
+			return (HEREDOC_FD);
+		}
 		fd = open(file, O_RDONLY);
+	}
 	else
 		fd = open(file, O_CREAT | O_WRONLY |
 			(info->right_append ? O_APPEND : O_TRUNC), 0644);
