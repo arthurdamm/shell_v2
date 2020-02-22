@@ -93,7 +93,7 @@ void free_info(info_t *info, int all)
 			free_list(&(info->alias));
 		bfree((void **)&info->heredoc);
 		bfree((void **)&info->heredoc_txt);
-		bfree((void **)&info->heredoc_cmd);
+		/* bfree((void **)&info->heredoc_cmd); */
 		ffree(info->environ);
 			info->environ = NULL;
 		bfree((void **)info->cmd_buf);
