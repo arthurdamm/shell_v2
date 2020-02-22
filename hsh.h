@@ -36,6 +36,9 @@
 
 #define HEREDOC_FD -2 /* set if using HEREDOC */
 
+/* Starting since of dynamically reallocating arrays */
+#define STARTING_ARR_SIZE 10
+
 extern char **environ;
 
 
@@ -271,6 +274,7 @@ int replace_string(char **, char *);
 void parse_left_redirect(info_t *info);
 void parse_right_redirect(info_t *info);
 int open_redirect(info_t *info, char *file, int left);
+size_t parse_heredoc(info_t *info, char **buf, size_t r);
 
 /* error.c */
 void print_error(info_t *, char *);

@@ -12,8 +12,6 @@ ssize_t input_buf(info_t *info, char **buf, size_t *len)
 {
 	ssize_t r = 0;
 	size_t len_p = 0;
-	static char *heredoc_buf;
-	static size_t heredoc_i, heredoc_len;
 
 	if (!*len) /* if nothing left in the buffer, fill it */
 	{
@@ -29,40 +27,13 @@ ssize_t input_buf(info_t *info, char **buf, size_t *len)
 		if (r > 0)
 		{
 			if (info->heredoc)
-			{
-				if (!_strcmp(info->heredoc, *buf))
-				{
-					bfree((void **)buf);
-					/* TODO: strdup/free? */
-					*buf = info->heredoc_cmd;
-					*len = _strlen(*buf);
-					info->heredoc_txt = heredoc_buf;
-					bfree((void **)&info->heredoc);
-					return (*len);
-				}
-				while (heredoc_len < r + heredoc_i)
-				{ 
-					heredoc_buf = _realloc(heredoc_buf, heredoc_len,
-						heredoc_len ? heredoc_len * 2 : 10);
-					if (!heredoc_buf)
-						exit(1);
-					heredoc_len <<= 1;
-					if (!heredoc_len)
-					{
-						_memset(heredoc_buf, 0, 10);
-						heredoc_len = 10;
-					}
-				}
-				_strcat(heredoc_buf, *buf);
-				heredoc_i += r;
-				return (r);
-			}
+				return (parse_heredoc(info, buf, r));
 			if ((*buf)[r - 1] == '\n')
 			{
 				(*buf)[r - 1] = '\0'; /* remove trailing newline */
 				r--;
 			}
-			info->linecount_flag = 1;
+			info->linecount_flag = 1; /* TODO: check linecount for heredoc */
 			remove_comments(*buf);
 			build_history_list(info, *buf, info->histcount++);
 			/* if (_strchr(*buf, ';')) is this a command chain? */

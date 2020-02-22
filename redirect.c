@@ -123,3 +123,44 @@ int open_redirect(info_t *info, char *file, int left)
 	}
 	return (fd);
 }
+
+/**
+ * parse_heredoc - parses line of HEREDOC input into buffer
+ * @info: the parameter struct
+ * @buf: the getline buffer
+ * @r: number of bytes read into getline buffer
+ * Return: length of heredoc_cmd if end of heredoc else r
+ */
+size_t parse_heredoc(info_t *info, char **buf, size_t r)
+{
+	static char *heredoc_buf;
+	static size_t heredoc_i, heredoc_len;
+	size_t len;
+
+	if (!_strcmp(info->heredoc, *buf))
+	{
+		bfree((void **)buf);
+		/* TODO: strdup/free? */
+		*buf = info->heredoc_cmd;
+		len = _strlen(*buf);
+		info->heredoc_txt = heredoc_buf;
+		bfree((void **)&info->heredoc);
+		return (len);
+	}
+	while (heredoc_len < r + heredoc_i)
+	{
+		heredoc_buf = _realloc(heredoc_buf, heredoc_len,
+			heredoc_len ? heredoc_len * 2 : STARTING_ARR_SIZE);
+		if (!heredoc_buf)
+			exit(1);
+		heredoc_len <<= 1;
+		if (!heredoc_len)
+		{
+			_memset(heredoc_buf, 0, STARTING_ARR_SIZE);
+			heredoc_len = STARTING_ARR_SIZE;
+		}
+	}
+	_strcat(heredoc_buf, *buf);
+	heredoc_i += r;
+	return (r);
+}
