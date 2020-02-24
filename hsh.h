@@ -12,6 +12,8 @@
 #include <fcntl.h>
 #include <errno.h>
 
+#include "ansi.h"
+
 /* for read/write buffers */
 #define READ_BUF_SIZE 1024
 #define WRITE_BUF_SIZE 1024
@@ -22,6 +24,7 @@
 #define CMD_OR		1
 #define CMD_AND		2
 #define CMD_CHAIN	3
+#define CMD_PIPE	4
 
 /* for convert_number() */
 #define CONVERT_LOWERCASE	1
