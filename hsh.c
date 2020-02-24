@@ -179,6 +179,7 @@ void fork_cmd(info_t *info)
 	else
 	{
 		wait(&(info->status));
+		info->left_redirect_from_fd = -1; /* RESET FD */
 		if (WIFEXITED(info->status))
 		{
 			info->status = WEXITSTATUS(info->status);

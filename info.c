@@ -39,7 +39,6 @@ void set_info(info_t *info, char **av)
 		{
 			if (!info->heredoc_cmd)
 				info->heredoc_cmd = _strdup(info->arg);
-			/* return; TODO: return? */
 		}
 		info->argv = strtow(info->arg, " \t");
 		if (!info->argv)
@@ -81,6 +80,8 @@ void free_info(info_t *info, int all)
 		close(info->right_redirect_to_fd);
 		info->right_redirect_to_fd = -1;
 	}
+	if (info->heredoc_txt && info->left_redirect_from_fd != HEREDOC_FD)
+		bfree((void **)&info->heredoc_txt);
 	if (all)
 	{
 		if (!info->cmd_buf)
@@ -93,7 +94,7 @@ void free_info(info_t *info, int all)
 			free_list(&(info->alias));
 		bfree((void **)&info->heredoc);
 		bfree((void **)&info->heredoc_txt);
-		/* bfree((void **)&info->heredoc_cmd); */
+		bfree((void **)&info->heredoc_cmd);
 		ffree(info->environ);
 			info->environ = NULL;
 		bfree((void **)info->cmd_buf);
@@ -124,5 +125,11 @@ void print_info(info_t *info)
 	printf("info->cmd_buf:[%p]\n", (void *)info->cmd_buf);
 	printf("info->*cmd_buf:[%s]\n",
 	       info->cmd_buf ? *(info->cmd_buf) : "NONE");
+
+	printf("info->left_redirect_from_fd:[%d]\n", info->left_redirect_from_fd);
+	printf("info->left_append:[%d]\n", info->left_append);
+	printf("info->heredoc:[%s]\n", info->heredoc);
+	printf("info->heredoc_txt:[%s]\n", info->heredoc_txt);
+	printf("info->heredoc_cmd:[%s]\n", info->heredoc_cmd);
 	printf("==========================\n");
 }

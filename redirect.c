@@ -140,10 +140,12 @@ size_t parse_heredoc(info_t *info, char **buf, size_t r)
 	if (!_strcmp(info->heredoc, *buf))
 	{
 		bfree((void **)buf);
-		/* TODO: strdup/free? */
 		*buf = info->heredoc_cmd;
+		info->heredoc_cmd = NULL; 
 		len = _strlen(*buf);
 		info->heredoc_txt = heredoc_buf;
+		heredoc_buf = NULL;
+		heredoc_i = heredoc_len = 0;
 		bfree((void **)&info->heredoc);
 		return (len);
 	}
