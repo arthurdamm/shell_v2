@@ -1,7 +1,7 @@
 #include "hsh.h"
 
 /**
- * help_info - returns information about args
+ * help - returns information about args
  * Return: 0 on success
  */
 void help(void)

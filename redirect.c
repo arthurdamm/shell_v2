@@ -141,7 +141,7 @@ size_t parse_heredoc(info_t *info, char **buf, size_t r)
 	{
 		bfree((void **)buf);
 		*buf = info->heredoc_cmd;
-		info->heredoc_cmd = NULL; 
+		info->heredoc_cmd = NULL;
 		len = _strlen(*buf);
 		info->heredoc_txt = heredoc_buf;
 		heredoc_buf = NULL;

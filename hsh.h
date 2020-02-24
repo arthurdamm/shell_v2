@@ -76,6 +76,8 @@ typedef struct liststr
  * @cmd_buf_type: CMD_type ||, &&, ;
  * @readfd: the fd from which to read line input
  * @histcount: the history line number count
+ * @left_redirect_from_fd: the fd to left redirect from
+ * @left_append: true if heredoc
  * @right_redirect_from_fd: fd right redirecting from (default 1)
  * @right_redirect_to_fd: fd right redirecting to
  * @right_append: true if right stream appends
@@ -140,6 +142,7 @@ int hsh(info_t *, char **);
 int find_builtin(info_t *);
 void find_cmd(info_t *);
 void fork_cmd(info_t *);
+void handle_redirects(info_t *info);
 
 /* path.c */
 int is_cmd(info_t *, char *);
