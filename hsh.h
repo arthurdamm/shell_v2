@@ -34,6 +34,11 @@
 #define HIST_FILE	".simple_shell_history"
 #define HIST_MAX	4096
 
+#define HEREDOC_FD -2 /* set if using HEREDOC */
+
+/* Starting since of dynamically reallocating arrays */
+#define STARTING_ARR_SIZE 10
+
 extern char **environ;
 
 
@@ -71,9 +76,15 @@ typedef struct liststr
  * @cmd_buf_type: CMD_type ||, &&, ;
  * @readfd: the fd from which to read line input
  * @histcount: the history line number count
+ * @left_redirect_from_fd: the fd to left redirect from
+ * @left_append: true if heredoc
  * @right_redirect_from_fd: fd right redirecting from (default 1)
  * @right_redirect_to_fd: fd right redirecting to
  * @right_append: true if right stream appends
+ * @heredoc: value of HEREDOC delimeter
+ * @heredoc_txt: accumulated HEREDOC lines
+ * @heredoc_cmd: the command to pipe HEREDOC line
+ * @help: help flags
  */
 typedef struct passinfo
 {
@@ -97,16 +108,22 @@ typedef struct passinfo
 	int readfd;
 	int histcount;
 
+	int left_redirect_from_fd;
+	int left_append;
+
 	int right_redirect_from_fd;
 	int right_redirect_to_fd;
 	int right_append;
 
+	char *heredoc;
+	char *heredoc_txt;
+	char *heredoc_cmd;
 	char *help;
 } info_t;
 
 #define INFO_INIT \
 {NULL, NULL, NULL, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, \
-	0, 0, 0, 1, -1, 0, NULL}
+	0, 0, 0, -1, 0, 1, -1, 0, NULL, NULL, NULL, NULL}
 
 /**
  *struct builtin - contains a builtin string and related function
@@ -125,6 +142,7 @@ int hsh(info_t *, char **);
 int find_builtin(info_t *);
 void find_cmd(info_t *);
 void fork_cmd(info_t *);
+void handle_redirects(info_t *info);
 
 /* path.c */
 int is_cmd(info_t *, char *);
@@ -256,8 +274,10 @@ int replace_vars(info_t *);
 int replace_string(char **, char *);
 
 /* redirect.c */
-void parse_redirect(info_t *info);
-int open_redirect(info_t *info, char *file);
+void parse_left_redirect(info_t *info);
+void parse_right_redirect(info_t *info);
+int open_redirect(info_t *info, char *file, int left);
+size_t parse_heredoc(info_t *info, char **buf, size_t r);
 
 /* error.c */
 void print_error(info_t *, char *);

@@ -26,12 +26,14 @@ ssize_t input_buf(info_t *info, char **buf, size_t *len)
 #endif
 		if (r > 0)
 		{
+			if (info->heredoc)
+				return (parse_heredoc(info, buf, r));
 			if ((*buf)[r - 1] == '\n')
 			{
 				(*buf)[r - 1] = '\0'; /* remove trailing newline */
 				r--;
 			}
-			info->linecount_flag = 1;
+			info->linecount_flag = 1; /* TODO: check linecount for heredoc */
 			remove_comments(*buf);
 			build_history_list(info, *buf, info->histcount++);
 			/* if (_strchr(*buf, ';')) is this a command chain? */

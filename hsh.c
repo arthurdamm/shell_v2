@@ -67,6 +67,8 @@ int find_builtin(info_t *info)
 		{NULL, NULL}
 	};
 
+	if (info->heredoc)
+		return (0);
 	for (i = 0; builtintbl[i].type; i++)
 		if (_strcmp(info->argv[0], builtintbl[i].type) == 0)
 		{
@@ -138,14 +140,7 @@ void fork_cmd(info_t *info)
 	}
 	if (child_pid == 0)
 	{
-		if (info->right_redirect_to_fd > -1)
-		{
-			if (dup2(info->right_redirect_to_fd, info->right_redirect_from_fd) == -1)
-			{
-				/* TODO: error msg? */
-				exit(1);
-			}
-		}
+		handle_redirects(info);
 		if (execve(info->path, info->argv, get_environ(info)) == -1)
 		{
 			free_info(info, 1);
@@ -158,11 +153,49 @@ void fork_cmd(info_t *info)
 	else
 	{
 		wait(&(info->status));
+		info->left_redirect_from_fd = -1; /* RESET FD */
 		if (WIFEXITED(info->status))
 		{
 			info->status = WEXITSTATUS(info->status);
 			if (info->status == 126)
 				print_error(info, "Permission denied\n");
+		}
+	}
+}
+
+
+/**
+ * handle_redirects - handles all left/right redirect syscalls
+ * @info: the parameter struct
+ */
+void handle_redirects(info_t *info)
+{
+	int pipefd[2];
+
+	if (info->left_redirect_from_fd == HEREDOC_FD)
+	{
+		if (pipe(pipefd) == -1)
+			exit(1);
+		if (dup2(pipefd[0], STDIN_FILENO) == -1)
+			exit(1);
+		write(pipefd[1], info->heredoc_txt, _strlen(info->heredoc_txt));
+		close(pipefd[0]);
+		close(pipefd[1]);
+	}
+	else if (info->left_redirect_from_fd > -1)
+	{
+		if (dup2(info->left_redirect_from_fd, STDIN_FILENO) == -1)
+		{
+			/* TODO: error msg? */
+			exit(1);
+		}
+	}
+	if (info->right_redirect_to_fd > -1)
+	{
+		if (dup2(info->right_redirect_to_fd, info->right_redirect_from_fd) == -1)
+		{
+			/* TODO: error msg? */
+			exit(1);
 		}
 	}
 }

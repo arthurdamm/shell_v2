@@ -10,6 +10,12 @@ void clear_info(info_t *info)
 	info->argv = NULL;
 	info->path = NULL;
 	info->argc = 0;
+	if (info->left_redirect_from_fd != HEREDOC_FD)
+	{
+		/* TODO where else? when to RESET? */
+		info->left_redirect_from_fd = -1;
+	}
+	info->left_append = 0;
 	info->right_redirect_from_fd = 1;
 	info->right_redirect_to_fd = -1;
 	info->right_append = 0;
@@ -27,7 +33,13 @@ void set_info(info_t *info, char **av)
 	info->fname = av[0];
 	if (info->arg)
 	{
-		parse_redirect(info);
+		parse_left_redirect(info);
+		parse_right_redirect(info);
+		if (info->left_redirect_from_fd == HEREDOC_FD)
+		{
+			if (!info->heredoc_cmd)
+				info->heredoc_cmd = _strdup(info->arg);
+		}
 		info->argv = strtow(info->arg, " \t");
 		if (!info->argv)
 		{
@@ -58,11 +70,18 @@ void free_info(info_t *info, int all)
 	ffree(info->argv);
 	info->argv = NULL;
 	info->path = NULL;
+	if (info->left_redirect_from_fd > 2)
+	{
+		close(info->left_redirect_from_fd);
+		info->left_redirect_from_fd = -1;
+	}
 	if (info->right_redirect_to_fd > 2)
 	{
 		close(info->right_redirect_to_fd);
 		info->right_redirect_to_fd = -1;
 	}
+	if (info->heredoc_txt && info->left_redirect_from_fd != HEREDOC_FD)
+		bfree((void **)&info->heredoc_txt);
 	if (all)
 	{
 		if (!info->cmd_buf)
@@ -73,6 +92,9 @@ void free_info(info_t *info, int all)
 			free_list(&(info->history));
 		if (info->alias)
 			free_list(&(info->alias));
+		bfree((void **)&info->heredoc);
+		bfree((void **)&info->heredoc_txt);
+		bfree((void **)&info->heredoc_cmd);
 		ffree(info->environ);
 			info->environ = NULL;
 		bfree((void **)info->cmd_buf);
@@ -103,5 +125,11 @@ void print_info(info_t *info)
 	printf("info->cmd_buf:[%p]\n", (void *)info->cmd_buf);
 	printf("info->*cmd_buf:[%s]\n",
 	       info->cmd_buf ? *(info->cmd_buf) : "NONE");
+
+	printf("info->left_redirect_from_fd:[%d]\n", info->left_redirect_from_fd);
+	printf("info->left_append:[%d]\n", info->left_append);
+	printf("info->heredoc:[%s]\n", info->heredoc);
+	printf("info->heredoc_txt:[%s]\n", info->heredoc_txt);
+	printf("info->heredoc_cmd:[%s]\n", info->heredoc_cmd);
 	printf("==========================\n");
 }
