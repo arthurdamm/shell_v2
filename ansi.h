@@ -1,5 +1,3 @@
-/* ANSI COOR codes for nice printing */
-
 #ifndef ANSI_COLOR
 #define ANSI_COLOR
 
@@ -13,6 +11,7 @@
 #define CYN "\033[0;36m"
 #define WHT "\033[0;37m"
 #define RES "\033[0m"
+#define RESL "\033[0m\n"
 
 /*Regular bold text*/
 #define BBLK "\033[1;30m"

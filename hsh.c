@@ -153,6 +153,13 @@ void fork_cmd(info_t *info)
 	else
 	{
 		wait(&(info->status));
+		/*printf(CYN "WAIT DONE" RESL);*/
+		if (info->pipefd[1] > 2)
+		{
+			/*printf(RED "CLOSING WRITE PIPE" RESL);*/
+			close(info->pipefd[1]), info->pipefd[1] = 0;
+		}
+
 		info->left_redirect_from_fd = -1; /* RESET FD */
 		if (WIFEXITED(info->status))
 		{
@@ -184,6 +191,7 @@ void handle_redirects(info_t *info)
 	}
 	else if (info->left_redirect_from_fd > -1)
 	{
+		/*printf(MAGB "LEFT REDIRECT to %d" RESL, info->left_redirect_from_fd);*/
 		if (dup2(info->left_redirect_from_fd, STDIN_FILENO) == -1)
 		{
 			/* TODO: error msg? */

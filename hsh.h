@@ -88,6 +88,7 @@ typedef struct liststr
  * @heredoc_txt: accumulated HEREDOC lines
  * @heredoc_cmd: the command to pipe HEREDOC line
  * @help: help flags
+ * @pipefd: fd pipe for interprocess communication | pipe
  */
 typedef struct passinfo
 {
@@ -122,11 +123,13 @@ typedef struct passinfo
 	char *heredoc_txt;
 	char *heredoc_cmd;
 	char *help;
+
+	int pipefd[2];
 } info_t;
 
 #define INFO_INIT \
 {NULL, NULL, NULL, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, \
-	0, 0, 0, -1, 0, 1, -1, 0, NULL, NULL, NULL, NULL}
+	0, 0, 0, -1, 0, 1, -1, 0, NULL, NULL, NULL, NULL, {0}}
 
 /**
  *struct builtin - contains a builtin string and related function
@@ -282,8 +285,13 @@ void parse_right_redirect(info_t *info);
 int open_redirect(info_t *info, char *file, int left);
 size_t parse_heredoc(info_t *info, char **buf, size_t r);
 
+/* pipe.c */
+void open_pipe(info_t *info);
+
 /* error.c */
 void print_error(info_t *, char *);
 void print_error_noarg(info_t *info, char *estr);
+
+
 
 #endif
