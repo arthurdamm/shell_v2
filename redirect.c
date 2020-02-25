@@ -149,7 +149,7 @@ size_t parse_heredoc(info_t *info, char **buf, size_t r)
 		bfree((void **)&info->heredoc);
 		return (len);
 	}
-	while (heredoc_len < r + heredoc_i)
+	while (heredoc_len <= r + heredoc_i)
 	{
 		heredoc_buf = _realloc(heredoc_buf, heredoc_len,
 			heredoc_len ? heredoc_len * 2 : STARTING_ARR_SIZE);
