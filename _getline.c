@@ -27,7 +27,7 @@ char *__getline(const int fd)
 			fb = fb->next;
 			free(temp);
 		}
-		memset(&head, 0, sizeof(head));
+		_memset((void *)&head, 0, sizeof(head));
 		return (NULL);
 	}
 	fb = get_fdbuf(&head, fd);
@@ -65,7 +65,7 @@ char *__read_buf(FdBuf *fb)
 			fb->buf = _realloc(fb->buf, fb->len, fb->len + r + 1);
 			if (!fb->buf)
 				return (NULL);
-			memcpy(fb->buf + fb->len, buf, r), fb->len += r;
+			_memcpy((void *)(fb->buf + fb->len), buf, r), fb->len += r;
 			p = __strchr(fb->buf + (fb->len - r), '\n', r);
 			if (p)
 			{
@@ -78,7 +78,7 @@ char *__read_buf(FdBuf *fb)
 	line = malloc(1 + (p - (fb->buf + fb->i)));
 	if (!line)
 		return (NULL);
-	memcpy(line, fb->buf + fb->i, 1 + (p - (fb->buf + fb->i)));
+	_memcpy((void *)line, fb->buf + fb->i, 1 + (p - (fb->buf + fb->i)));
 	fb->i = (p - fb->buf) + 1;
 	if (fb->i >= fb->len)
 	{
@@ -112,13 +112,13 @@ FdBuf *get_fdbuf(FdBuf *head, const int fd)
 		return (NULL);
 	if (fd < head->fd) /* need to copy head over and replace */
 	{
-		memcpy(node, head, sizeof(*head));
-		memset(head, 0, sizeof(*head));
+		_memcpy((void *)node, (void *)head, sizeof(*head));
+		_memset((void *)head, 0, sizeof(*head));
 		head->fd = fd;
 		head->next = node;
 		return (head);
 	}
-	memset(node, 0, sizeof(*node));
+	_memset((void *)node, 0, sizeof(*node));
 	node->fd = fd;
 	node->next = head->next;
 	head->next = node;

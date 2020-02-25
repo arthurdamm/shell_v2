@@ -200,11 +200,10 @@ char **strtow(char *, char *);
 char **strtow2(char *, char);
 
 /* memory_functions */
+char *_memcpy(char *dest, char *src, unsigned int n);
 char *_memset(char *, char, unsigned int);
 void ffree(char **);
 void *_realloc(void *, unsigned int, unsigned int);
-
-/* memory_functions2.c */
 int bfree(void **);
 
 /* more_functions.c */
