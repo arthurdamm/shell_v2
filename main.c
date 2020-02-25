@@ -10,30 +10,19 @@
 int main(int ac, char **av)
 {
 	info_t info[] = { INFO_INIT };
-	int fd;
 
 	if (ac == 2)
 	{
-		fd = open(av[1], O_RDONLY);
-		if (fd == -1)
+		info->readfd = open_file(info, av[1], 0);
+		if (info->readfd == -1)
 		{
-			if (errno == EACCES)
-				exit(126);
-			if (errno == ENOENT)
-			{
-				_eputs(av[0]);
-				_eputs(": 0: Can't open ");
-				_eputs(av[1]);
-				_eputchar('\n');
-				_eputchar(BUF_FLUSH);
-				exit(127);
-			}
-			return (EXIT_FAILURE);
+			free_info(info, 1);
+			exit(info->err_num);
 		}
-		info->readfd = fd;
 	}
 	populate_env_list(info);
 	read_history(info);
+	read_startup_file(info);
 	hsh(info, av);
 	return (EXIT_SUCCESS);
 }

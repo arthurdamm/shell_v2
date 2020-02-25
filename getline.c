@@ -23,6 +23,12 @@ ssize_t input_buf(info_t *info, char **buf, size_t *len)
 		r = getline(buf, &len_p, stdin);
 #else
 		r = _getline(info, buf, &len_p);
+		if (r == -1 && info->startup_fd > -1)
+		{
+			close(info->startup_fd);
+			info->startup_fd = -1;
+			r = _getline(info, buf, &len_p);
+		}
 #endif
 		if (r >= 0)
 		{
@@ -124,7 +130,7 @@ int _getline(info_t *info, char **ptr, size_t *length)
 	size_t r;
 
 	(void)length;
-	*ptr = __getline(info->readfd);
+	*ptr = __getline(info->startup_fd > -1 ? info->startup_fd : info->readfd);
 	if (!*ptr)
 		r = -1;
 	else
