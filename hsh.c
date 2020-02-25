@@ -21,10 +21,13 @@ int hsh(info_t *info, char **av)
 		r = get_input(info);
 		if (r != -1)
 		{
-			set_info(info, av);
-			builtin_ret = find_builtin(info);
-			if (builtin_ret == -1)
-				find_cmd(info);
+			if (!set_info(info, av))
+			{
+				builtin_ret = find_builtin(info);
+				if (builtin_ret == -1)
+					find_cmd(info);
+			} else
+				builtin_ret = -2;
 		}
 		else if (interactive(info))
 			_putchar('\n');

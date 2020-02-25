@@ -25,11 +25,13 @@ void clear_info(info_t *info)
  * set_info - initializes info_t struct
  * @info: struct address
  * @av: argument vector
+ * Return: 0 if no error else error code
  */
-void set_info(info_t *info, char **av)
+int set_info(info_t *info, char **av)
 {
 	int i = 0;
 
+	info->err_num = 0;
 	info->fname = av[0];
 	if (info->arg)
 	{
@@ -58,6 +60,7 @@ void set_info(info_t *info, char **av)
 		replace_alias(info);
 		replace_vars(info);
 	}
+	return (info->err_num);
 }
 
 /**
@@ -121,6 +124,7 @@ void print_info(info_t *info)
 	printf("info->argc:[%d]\n", info->argc);
 	printf("info->line_count:[%d]\n", info->line_count);
 	printf("info->err_num:[%d]\n", info->err_num);
+	printf("info->status:[%d]\n", info->status);
 	printf("info->fname:[%s]\n", info->fname);
 	printf("info->env:[%p]\n", (void *)info->env);
 	printf("info->cmd_buf:[%p]\n", (void *)info->cmd_buf);

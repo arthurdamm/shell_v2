@@ -107,12 +107,14 @@ int open_redirect(info_t *info, char *file, int left)
 	}
 	else
 		fd = open(file, O_CREAT | O_WRONLY |
-			(info->right_append ? O_APPEND : O_TRUNC), 0644);
+			(info->right_append ? O_APPEND : O_TRUNC), 0666);
 	if (fd == -1)
 	{
 		char buf[256];
 
 		buf[0] = 0;
+		info->line_count++;
+		info->err_num = 2;
 		if (left)
 			sprintf(buf, "cannot open %s: Permission denied\n", file);
 		else

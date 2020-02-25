@@ -240,7 +240,7 @@ void sigintHandler(int);
 
 /* info.c module */
 void clear_info(info_t *);
-void set_info(info_t *, char **);
+int set_info(info_t *info, char **av);
 void free_info(info_t *, int);
 void print_info(info_t *info);
 
