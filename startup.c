@@ -17,7 +17,7 @@ int open_file(info_t *info, char *name, int silent)
 			info->err_num = 126;
 		if (errno == ENOENT)
 		{
-			_eputs(info->fname);
+			_eputs("./hsh");
 			_eputs(": 0: Can't open ");
 			_eputs(name);
 			_eputchar('\n');
