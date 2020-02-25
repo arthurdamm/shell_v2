@@ -35,9 +35,12 @@ int open_file(info_t *info, char *name, int silent)
  */
 void read_startup_file(info_t *info)
 {
-	char *buf = malloc(_strlen(_getenv(info, "HOME=")) +
-		_strlen(STARTUP_FILE) + 2);
+	char *buf;
 
+	if (!_getenv(info, "HOME="))
+		return;
+	buf = malloc(_strlen(_getenv(info, "HOME=")) +
+		_strlen(STARTUP_FILE) + 2);
 	if (!buf)
 		return;
 	*buf = 0;
