@@ -13,6 +13,7 @@
 #include <errno.h>
 
 #include "ansi.h"
+#include "_getline.h"
 
 /* for read/write buffers */
 #define READ_BUF_SIZE 1024
@@ -31,7 +32,7 @@
 #define CONVERT_UNSIGNED	2
 
 /* 1 if using system getline() */
-#define USE_GETLINE 1
+#define USE_GETLINE 0
 #define USE_STRTOK 0
 
 #define HIST_FILE	".simple_shell_history"
