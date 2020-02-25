@@ -43,6 +43,9 @@
 /* Starting since of dynamically reallocating arrays */
 #define STARTING_ARR_SIZE 10
 
+/* location of the file to execute its contents at startup */
+#define STARTUP_FILE ".hshrc"
+
 extern char **environ;
 
 
@@ -90,6 +93,7 @@ typedef struct liststr
  * @heredoc_cmd: the command to pipe HEREDOC line
  * @help: help flags
  * @pipefd: fd pipe for interprocess communication | pipe
+ * @startup_fd: fd of startup file or -1
  */
 typedef struct passinfo
 {
@@ -126,11 +130,12 @@ typedef struct passinfo
 	char *help;
 
 	int pipefd[2];
+	int startup_fd;
 } info_t;
 
 #define INFO_INIT \
 {NULL, NULL, NULL, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, \
-	0, 0, 0, -1, 0, 1, -1, 0, NULL, NULL, NULL, NULL, {0}}
+	0, 0, 0, -1, 0, 1, -1, 0, NULL, NULL, NULL, NULL, {0}, -1}
 
 /**
  *struct builtin - contains a builtin string and related function
@@ -291,6 +296,10 @@ void open_pipe(info_t *info);
 /* error.c */
 void print_error(info_t *, char *);
 void print_error_noarg(info_t *info, char *estr);
+
+/* startup.c */
+int open_file(info_t *info, char *name, int silent);
+void read_startup_file(info_t *info);
 
 
 
