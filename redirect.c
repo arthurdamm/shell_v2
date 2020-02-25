@@ -98,11 +98,9 @@ int open_redirect(info_t *info, char *file, int left)
 	{
 		if (info->left_append)
 		{
-			info->heredoc = malloc(_strlen(file) + 2);
+			info->heredoc = _strdup(file);
 			if (!info->heredoc)
 				exit(1);
-			_strcpy(info->heredoc, file);
-			_strcat(info->heredoc, "\n");
 			return (HEREDOC_FD);
 		}
 		fd = open(file, O_RDONLY);
@@ -137,6 +135,7 @@ size_t parse_heredoc(info_t *info, char **buf, size_t r)
 	static size_t heredoc_i, heredoc_len;
 	size_t len;
 
+	r++;
 	if (!_strcmp(info->heredoc, *buf))
 	{
 		bfree((void **)buf);
@@ -163,6 +162,7 @@ size_t parse_heredoc(info_t *info, char **buf, size_t r)
 		}
 	}
 	_strcat(heredoc_buf, *buf);
+	_strcat(heredoc_buf, "\n");
 	heredoc_i += r;
 	return (r);
 }
