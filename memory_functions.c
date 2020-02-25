@@ -1,6 +1,24 @@
 #include "hsh.h"
 
 /**
+ * _memcpy - copies bytes from src to dest
+ * @dest: pointer to destination buffer
+ * @src: pointer to source buffer
+ * @n: number of bytes to copy
+ *
+ * Return: pointer to destination buffer
+ */
+char *_memcpy(char *dest, char *src, unsigned int n)
+{
+	while (n--)
+	{
+		*(dest + n) = *(src + n);
+	}
+	return (dest);
+}
+
+
+/**
  **_memset - fills memory with a constant byte
  *@s: the pointer to the memory area
  *@b: the byte to fill *s with
