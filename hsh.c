@@ -27,7 +27,7 @@ int hsh(info_t *info, char **av)
 				if (builtin_ret == -1)
 					find_cmd(info);
 			} else
-				builtin_ret = -2;
+				builtin_ret = -3;
 		}
 		else if (interactive(info))
 			_putchar('\n');
@@ -37,7 +37,7 @@ int hsh(info_t *info, char **av)
 	free_info(info, 1);
 	if (!interactive(info) && info->status)
 		exit(info->status);
-	if (builtin_ret == -2)
+	if (builtin_ret <= -2)
 	{
 		if (info->err_num == -1)
 			exit(info->status);
@@ -194,7 +194,6 @@ void handle_redirects(info_t *info)
 	}
 	else if (info->left_redirect_from_fd > -1)
 	{
-		/*printf(MAGB "LEFT REDIRECT to %d" RESL, info->left_redirect_from_fd);*/
 		if (dup2(info->left_redirect_from_fd, STDIN_FILENO) == -1)
 		{
 			/* TODO: error msg? */

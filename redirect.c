@@ -86,6 +86,7 @@ void parse_right_redirect(info_t *info)
 int open_redirect(info_t *info, char *file, int left)
 {
 	int fd;
+	char buf[256];
 
 	while (*file == ' ' || *file == '\t')
 		file++;
@@ -110,13 +111,15 @@ int open_redirect(info_t *info, char *file, int left)
 			(info->right_append ? O_APPEND : O_TRUNC), 0666);
 	if (fd == -1)
 	{
-		char buf[256];
-
 		buf[0] = 0;
-		info->line_count++;
-		info->err_num = 2;
+		info->line_count++, info->err_num = 2;
 		if (left)
-			sprintf(buf, "cannot open %s: Permission denied\n", file);
+		{
+			if (errno == EACCES)
+				sprintf(buf, "cannot open %s: Permission denied\n", file);
+			else if (errno == ENOENT)
+				sprintf(buf, "cannot open %s: No such file\n", file);
+		}
 		else
 			sprintf(buf, "cannot create %s: Permission denied\n", file);
 		print_error_noarg(info, buf);
