@@ -113,7 +113,7 @@ int open_redirect(info_t *info, char *file, int left)
 	{
 		buf[0] = 0;
 		info->line_count++;
-		info->err_num = 2;
+		info->err_num = info->status = 2;
 		action = left ? "open" : "create";
 		if (errno == EACCES)
 			sprintf(buf, "cannot %s %s: Permission denied\n", action, file);
