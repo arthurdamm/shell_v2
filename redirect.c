@@ -168,3 +168,23 @@ size_t parse_heredoc(info_t *info, char **buf, size_t r)
 	heredoc_i += r;
 	return (r);
 }
+
+/**
+ * restore_stdfd - restores stdin/out after redirect
+ * @info: the parameter struct
+ */
+void restore_stdfd(info_t *info)
+{
+	if (info->dup_stdin)
+	{
+		dup2(info->dup_stdin, STDIN_FILENO);
+		close(info->dup_stdin);
+		info->dup_stdin = 0;
+	}
+	if (info->dup_stdout)
+	{
+		dup2(info->dup_stdout, STDOUT_FILENO);
+		close(info->dup_stdout);
+		info->dup_stdout = 0;
+	}
+}

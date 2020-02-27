@@ -94,6 +94,8 @@ typedef struct liststr
  * @help: help flags
  * @pipefd: fd pipe for interprocess communication | pipe
  * @startup_fd: fd of startup file or -1
+ * @dup_stdin: saved duplicate of stdin for restoration after redirect
+ * @dup_stdout: saved duplicate of stdout for restoration after redirect
  */
 typedef struct passinfo
 {
@@ -131,11 +133,13 @@ typedef struct passinfo
 
 	int pipefd[2];
 	int startup_fd;
+	int dup_stdin;
+	int dup_stdout;
 } info_t;
 
 #define INFO_INIT \
 {NULL, NULL, NULL, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, \
-	0, 0, 0, -1, 0, 1, -1, 0, NULL, NULL, NULL, NULL, {0}, -1}
+	0, 0, 0, -1, 0, 1, -1, 0, NULL, NULL, NULL, NULL, {0}, -1, 0, 0}
 
 /**
  *struct builtin - contains a builtin string and related function
@@ -172,9 +176,6 @@ void help_history(info_t *);
 void help_alias(info_t *);
 void help_echo(info_t *);
 void help_pwd(info_t *);
-
-/* loophsh.c */
-int loophsh(char **);
 
 /* err_string_functions.c */
 void _eputs(char *);
@@ -289,6 +290,7 @@ void parse_left_redirect(info_t *info);
 void parse_right_redirect(info_t *info);
 int open_redirect(info_t *info, char *file, int left);
 size_t parse_heredoc(info_t *info, char **buf, size_t r);
+void restore_stdfd(info_t *info);
 
 /* pipe.c */
 void open_pipe(info_t *info);
