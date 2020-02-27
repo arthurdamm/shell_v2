@@ -132,6 +132,8 @@ void print_info(info_t *info)
 	       info->cmd_buf ? *(info->cmd_buf) : "NONE");
 
 	printf("info->left_redirect_from_fd:[%d]\n", info->left_redirect_from_fd);
+	printf("info->right_redirect_from_fd:[%d]\n", info->right_redirect_from_fd);
+	printf("info->right_redirect_to_fd:[%d]\n", info->right_redirect_to_fd);
 	printf("info->left_append:[%d]\n", info->left_append);
 	printf("info->heredoc:[%s]\n", info->heredoc);
 	printf("info->heredoc_txt:[%s]\n", info->heredoc_txt);
