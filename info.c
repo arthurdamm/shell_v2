@@ -42,6 +42,7 @@ int set_info(info_t *info, char **av)
 			if (!info->heredoc_cmd)
 				info->heredoc_cmd = _strdup(info->arg);
 		}
+		handle_redirects(info);
 		info->argv = strtow(info->arg, " \t");
 		if (!info->argv)
 		{
@@ -70,6 +71,7 @@ int set_info(info_t *info, char **av)
  */
 void free_info(info_t *info, int all)
 {
+	restore_stdfd(info);
 	ffree(info->argv);
 	info->argv = NULL;
 	info->path = NULL;

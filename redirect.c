@@ -175,6 +175,8 @@ size_t parse_heredoc(info_t *info, char **buf, size_t r)
  */
 void restore_stdfd(info_t *info)
 {
+	_putchar(BUF_FLUSH);
+	_eputchar(BUF_FLUSH);
 	if (info->dup_stdin)
 	{
 		dup2(info->dup_stdin, STDIN_FILENO);

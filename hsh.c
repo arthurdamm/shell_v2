@@ -76,11 +76,7 @@ int find_builtin(info_t *info)
 		if (_strcmp(info->argv[0], builtintbl[i].type) == 0)
 		{
 			info->line_count++;
-			handle_redirects(info);
 			built_in_ret = builtintbl[i].func(info);
-			_putchar(BUF_FLUSH);
-			_eputchar(BUF_FLUSH);
-			restore_stdfd(info);
 			break;
 		}
 	return (built_in_ret);
@@ -147,7 +143,6 @@ void fork_cmd(info_t *info)
 	}
 	if (child_pid == 0)
 	{
-		handle_redirects(info);
 		if (execve(info->path, info->argv, get_environ(info)) == -1)
 		{
 			free_info(info, 1);
