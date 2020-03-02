@@ -1,7 +1,7 @@
 #include "hsh.h"
 
 /**
- * help_info - returns information about args
+ * help - returns information about args
  * Return: 0 on success
  */
 void help(void)
@@ -20,12 +20,12 @@ void help(void)
  */
 void help_cd(info_t *info)
 {
-    if (info->help && _strcmp(info->help, "s") == 0)
+	if (info->help && _strcmp(info->help, "s") == 0)
 		printf("cd: cd [-L|[-P [-e]] [-@]] [dir]\n");
 	else if (info->help && _strcmp(info->help, "d") == 0)
 		printf("cd - Change the shell working directory.\n");
 	else
-	{	
+	{
 		printf("cd: cd [-L|[-P [-e]] [-@]] [dir]\n");
 		printf("    Change the shell working directory.\n\n");
 		printf("    Change the current directory to DIR.  ");
@@ -54,8 +54,6 @@ void help_cd(info_t *info)
 		"            as a directory containing the file attributes\n\n");
 		printf("    The default is to follow symbolic links, as if `-L' were ");
 		printf("specified.\n");
-		printf("    `..' is processed by removing the immediately previous pathname");
-		printf(" component\n    back to a slash or the beginning of DIR.\n\n");
 		printf("    Exit Status:\n");
 		printf("    Returns 0 if the directory is changed, and if $PWD is set ");
 		printf("successfully when\n    -P is used; non-zero otherwise.\n");
