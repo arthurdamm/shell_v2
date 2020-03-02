@@ -91,3 +91,37 @@ int _setenv(info_t *info, char *var, char *value)
 	info->env_changed = 1;
 	return (0);
 }
+
+/**
+ * print_prompt - prints PS1 if exists
+ * @info: info struct
+ * @prompt: prompt given
+ * Return: void
+ */
+void print_prompt(info_t *info, char *prompt)
+{
+	char hostname[WRITE_BUF_SIZE + 1];
+	char *env_var = NULL;
+
+	if (_strcmp(prompt, "\\d") == 0)
+		printf("date ");
+	if (_strcmp(prompt, "\\H") == 0)
+	{
+		if (gethostname(hostname, WRITE_BUF_SIZE) == 0)
+			printf("%s", hostname);
+		else
+			perror("gethostname");
+	}
+	if (_strcmp(prompt, "\\s") == 0)
+		printf("-hsh");
+	if (_strcmp(prompt, "\\u") == 0)
+	{
+		env_var = _getenv(info, "USER=");
+		printf("%s", env_var);
+	}
+	if (_strcmp(prompt, "\\w") == 0)
+	{
+		env_var = _getenv(info, "PWD=");
+		printf("%s", env_var);
+	}
+}
