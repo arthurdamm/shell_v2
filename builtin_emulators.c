@@ -96,9 +96,11 @@ int _myhelp(info_t *info)
 		help();
 		return (0);
 	}
-
 	builtin = help_flag_check(info, arg);
-
+	if (!builtin)
+	{
+		return (0);
+	}
 	if (_strcmp(builtin, "alias") == 0)
 		help_alias(info);
 	else if (_strcmp(builtin, "cd") == 0)
@@ -133,32 +135,36 @@ int _myhelp(info_t *info)
 char *help_flag_check(info_t *info, char **arg)
 {
 	char *builtin = arg[1];
-	int i = 1;
+	int i = 1, j = 0;
 
-	while (_strcmp(arg[i], "-s") == 0)
+	if (arg[1][j] == '-')
 	{
-		info->help = "s";
-		if (arg[i + 1] != NULL)
-			builtin = arg[i + 1];
-		else
+		for (j = 1; j < _strlen(arg[i]); j++)
 		{
-			help();
-			return (NULL);
+			if (arg[1][j] == 's')
+				info->help = "s";
+			if (arg[1][j] == 'd')
+			{
+				info->help = "d";
+				break;
+			}
 		}
-		i++;
+		for (j = 1; j < _strlen(arg[1]); j++)
+		{
+			if (arg[1][j] != 's' &&
+				arg[1][j] != 'd' &&
+				arg[1][j] != 'm')
+			{
+				printf("-hsh: help: %c: invalid option\n", arg[i][j]);
+				printf("help: usage: help [-dms] [pattern ...]\n");
+				info->help = NULL;
+				return (NULL);
+			}
+		}
+		return (arg[2]);
 	}
-	i = 1;
-	while (_strcmp(arg[i], "-d") == 0)
+	else
 	{
-		info->help = "d";
-		if (arg[i + 1] != NULL)
-			builtin = arg[i + 1];
-		else
-		{
-			help();
-			return (NULL);
-		}
-		i++;
+		return (builtin);
 	}
-	return (builtin);
 }
