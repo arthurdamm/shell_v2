@@ -11,6 +11,7 @@
 #include <limits.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <time.h>
 
 #include "ansi.h"
 #include "_getline.h"
