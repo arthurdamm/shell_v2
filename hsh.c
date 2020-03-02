@@ -11,12 +11,19 @@ int hsh(info_t *info, char **av)
 {
 	ssize_t r = 0;
 	int builtin_ret = 0;
+	char *prompt = NULL;
 
 	while (r != -1 && builtin_ret != -2)
 	{
 		clear_info(info);
 		if (interactive(info))
-			_puts("$ ");
+		{
+			prompt = _getenv(info, "PS1=");
+			if (prompt != NULL)
+				print_prompt(info, prompt);
+			else
+				printf("$ ");
+		}
 		_eputchar(BUF_FLUSH);
 		r = get_input(info);
 		if (r != -1)
