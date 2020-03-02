@@ -104,7 +104,9 @@ void print_prompt(info_t *info, char *prompt)
 	char *env_var = NULL;
 
 	if (_strcmp(prompt, "\\d") == 0)
-		printf("date ");
+	{
+		printf("TODO = date\n");
+	}
 	if (_strcmp(prompt, "\\H") == 0)
 	{
 		if (gethostname(hostname, WRITE_BUF_SIZE) == 0)
