@@ -86,6 +86,7 @@ void parse_right_redirect(info_t *info)
 int open_redirect(info_t *info, char *file, int left)
 {
 	int fd;
+	char buf[256], *action;
 
 	while (*file == ' ' || *file == '\t')
 		file++;
@@ -95,20 +96,97 @@ int open_redirect(info_t *info, char *file, int left)
 		return (-1);
 	}
 	if (left)
+	{
+		if (info->left_append)
+		{
+			info->heredoc = _strdup(file);
+			if (!info->heredoc)
+				exit(1);
+			return (HEREDOC_FD);
+		}
 		fd = open(file, O_RDONLY);
+	}
 	else
 		fd = open(file, O_CREAT | O_WRONLY |
-			(info->right_append ? O_APPEND : O_TRUNC), 0644);
+			(info->right_append ? O_APPEND : O_TRUNC), 0666);
 	if (fd == -1)
 	{
-		char buf[256];
-
 		buf[0] = 0;
-		if (left)
-			sprintf(buf, "cannot open %s: Permission denied\n", file);
-		else
-			sprintf(buf, "cannot create %s: Permission denied\n", file);
+		info->line_count++;
+		info->err_num = info->status = 2;
+		action = left ? "open" : "create";
+		if (errno == EACCES)
+			sprintf(buf, "cannot %s %s: Permission denied\n", action, file);
+		else if (errno == ENOENT)
+			sprintf(buf, "cannot %s %s: No such file\n", action, file);
 		print_error_noarg(info, buf);
 	}
 	return (fd);
+}
+
+/**
+ * parse_heredoc - parses line of HEREDOC input into buffer
+ * @info: the parameter struct
+ * @buf: the getline buffer
+ * @r: number of bytes read into getline buffer
+ * Return: length of heredoc_cmd if end of heredoc else r
+ */
+size_t parse_heredoc(info_t *info, char **buf, size_t r)
+{
+	static char *heredoc_buf;
+	static size_t heredoc_i, heredoc_len;
+	size_t len;
+
+	r++;
+	if (!_strcmp(info->heredoc, *buf))
+	{
+		bfree((void **)buf);
+		*buf = info->heredoc_cmd;
+		info->heredoc_cmd = NULL;
+		len = _strlen(*buf);
+		info->heredoc_txt = heredoc_buf;
+		heredoc_buf = NULL;
+		heredoc_i = heredoc_len = 0;
+		bfree((void **)&info->heredoc);
+		return (len);
+	}
+	while (heredoc_len <= r + heredoc_i)
+	{
+		heredoc_buf = _realloc(heredoc_buf, heredoc_len,
+			heredoc_len ? heredoc_len * 2 : STARTING_ARR_SIZE);
+		if (!heredoc_buf)
+			exit(1);
+		heredoc_len <<= 1;
+		if (!heredoc_len)
+		{
+			_memset(heredoc_buf, 0, STARTING_ARR_SIZE);
+			heredoc_len = STARTING_ARR_SIZE;
+		}
+	}
+	_strcat(heredoc_buf, *buf);
+	_strcat(heredoc_buf, "\n");
+	heredoc_i += r;
+	return (r);
+}
+
+/**
+ * restore_stdfd - restores stdin/out after redirect
+ * @info: the parameter struct
+ */
+void restore_stdfd(info_t *info)
+{
+	_putchar(BUF_FLUSH);
+	_eputchar(BUF_FLUSH);
+	if (info->dup_stdin)
+	{
+		dup2(info->dup_stdin, STDIN_FILENO);
+		close(info->dup_stdin);
+		info->dup_stdin = 0;
+	}
+	if (info->dup_stdout)
+	{
+		dup2(info->dup_stdout, STDOUT_FILENO);
+		close(info->dup_stdout);
+		info->dup_stdout = 0;
+	}
 }

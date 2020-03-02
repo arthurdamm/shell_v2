@@ -12,6 +12,9 @@
 #include <fcntl.h>
 #include <errno.h>
 
+#include "ansi.h"
+#include "_getline.h"
+
 /* for read/write buffers */
 #define READ_BUF_SIZE 1024
 #define WRITE_BUF_SIZE 1024
@@ -22,17 +25,26 @@
 #define CMD_OR		1
 #define CMD_AND		2
 #define CMD_CHAIN	3
+#define CMD_PIPE	4
 
 /* for convert_number() */
 #define CONVERT_LOWERCASE	1
 #define CONVERT_UNSIGNED	2
 
 /* 1 if using system getline() */
-#define USE_GETLINE 1
+#define USE_GETLINE 0
 #define USE_STRTOK 0
 
-#define HIST_FILE	".simple_shell_history"
+#define HIST_FILE	".hsh_history"
 #define HIST_MAX	4096
+
+#define HEREDOC_FD -2 /* set if using HEREDOC */
+
+/* Starting since of dynamically reallocating arrays */
+#define STARTING_ARR_SIZE 10
+
+/* location of the file to execute its contents at startup */
+#define STARTUP_FILE ".hshrc"
 
 extern char **environ;
 
@@ -71,9 +83,19 @@ typedef struct liststr
  * @cmd_buf_type: CMD_type ||, &&, ;
  * @readfd: the fd from which to read line input
  * @histcount: the history line number count
+ * @left_redirect_from_fd: the fd to left redirect from
+ * @left_append: true if heredoc
  * @right_redirect_from_fd: fd right redirecting from (default 1)
  * @right_redirect_to_fd: fd right redirecting to
  * @right_append: true if right stream appends
+ * @heredoc: value of HEREDOC delimeter
+ * @heredoc_txt: accumulated HEREDOC lines
+ * @heredoc_cmd: the command to pipe HEREDOC line
+ * @help: help flags
+ * @pipefd: fd pipe for interprocess communication | pipe
+ * @startup_fd: fd of startup file or -1
+ * @dup_stdin: saved duplicate of stdin for restoration after redirect
+ * @dup_stdout: saved duplicate of stdout for restoration after redirect
  */
 typedef struct passinfo
 {
@@ -104,12 +126,20 @@ typedef struct passinfo
 	int right_redirect_to_fd;
 	int right_append;
 
+	char *heredoc;
+	char *heredoc_txt;
+	char *heredoc_cmd;
 	char *help;
+
+	int pipefd[2];
+	int startup_fd;
+	int dup_stdin;
+	int dup_stdout;
 } info_t;
 
 #define INFO_INIT \
 {NULL, NULL, NULL, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, \
-	0, 0, 0, -1, 0, 1, -1, 0, NULL}
+	0, 0, 0, -1, 0, 1, -1, 0, NULL, NULL, NULL, NULL, {0}, -1, 0, 0}
 
 /**
  *struct builtin - contains a builtin string and related function
@@ -128,6 +158,7 @@ int hsh(info_t *, char **);
 int find_builtin(info_t *);
 void find_cmd(info_t *);
 void fork_cmd(info_t *);
+void handle_redirects(info_t *info);
 
 /* path.c */
 int is_cmd(info_t *, char *);
@@ -145,9 +176,6 @@ void help_history(info_t *);
 void help_alias(info_t *);
 void help_echo(info_t *);
 void help_pwd(info_t *);
-
-/* loophsh.c */
-int loophsh(char **);
 
 /* err_string_functions.c */
 void _eputs(char *);
@@ -178,11 +206,10 @@ char **strtow(char *, char *);
 char **strtow2(char *, char);
 
 /* memory_functions */
+char *_memcpy(char *dest, char *src, unsigned int n);
 char *_memset(char *, char, unsigned int);
 void ffree(char **);
 void *_realloc(void *, unsigned int, unsigned int);
-
-/* memory_functions2.c */
 int bfree(void **);
 
 /* more_functions.c */
@@ -214,7 +241,7 @@ void sigintHandler(int);
 
 /* info.c module */
 void clear_info(info_t *);
-void set_info(info_t *, char **);
+int set_info(info_t *info, char **av);
 void free_info(info_t *, int);
 void print_info(info_t *info);
 
@@ -262,9 +289,20 @@ int replace_string(char **, char *);
 void parse_left_redirect(info_t *info);
 void parse_right_redirect(info_t *info);
 int open_redirect(info_t *info, char *file, int left);
+size_t parse_heredoc(info_t *info, char **buf, size_t r);
+void restore_stdfd(info_t *info);
+
+/* pipe.c */
+void open_pipe(info_t *info);
 
 /* error.c */
 void print_error(info_t *, char *);
 void print_error_noarg(info_t *info, char *estr);
+
+/* startup.c */
+int open_file(info_t *info, char *name, int silent);
+void read_startup_file(info_t *info);
+
+
 
 #endif

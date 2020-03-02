@@ -12,11 +12,20 @@ int is_chain(info_t *info, char *buf, size_t *p)
 {
 	size_t j = *p;
 
-	if (buf[j] == '|' && buf[j + 1] == '|')
+	if (buf[j] == '|')
 	{
-		buf[j] = 0;
-		j++;
-		info->cmd_buf_type = CMD_OR;
+		if (buf[j + 1] == '|')
+		{
+			buf[j] = 0;
+			j++;
+			info->cmd_buf_type = CMD_OR;
+		}
+		else
+		{
+			open_pipe(info);
+			buf[j] = 0;
+			info->cmd_buf_type = CMD_PIPE;
+		}
 	}
 	else if (buf[j] == '&' && buf[j + 1] == '&')
 	{
@@ -57,13 +66,20 @@ void check_chain(info_t *info, char *buf, size_t *p, size_t i, size_t len)
 			j = len;
 		}
 	}
-	if (info->cmd_buf_type == CMD_OR)
+	else if (info->cmd_buf_type == CMD_OR)
 	{
 		if (!info->status)
 		{
 			buf[i] = 0;
 			j = len;
 		}
+	}
+	else if (info->cmd_buf_type == CMD_PIPE)
+	{
+		/*printf(YEL "CHECK_PIPE" RESL);*/
+		info->left_redirect_from_fd = info->pipefd[0];
+		info->pipefd[0] = 0;
+		info->pipefd[1] = 0;
 	}
 
 	*p = j;
