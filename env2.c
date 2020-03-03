@@ -98,32 +98,37 @@ int _setenv(info_t *info, char *var, char *value)
  * @prompt: prompt given
  * Return: void
  */
-void print_prompt(info_t *info, char *prompt)
+char *print_prompt(info_t *info, char *prompt)
 {
 	char hostname[WRITE_BUF_SIZE + 1];
-	char *env_var = NULL;
+	char *_PS1 = NULL;
 
-	if (_strcmp(prompt, "\\d") == 0)
-	{
-		printf("TODO = date\n");
-	}
-	if (_strcmp(prompt, "\\H") == 0)
+	if (_strcmp(prompt, "\\!") == 0)
+		_PS1 = convert_number(info->histcount, 10, 0);
+	else if (_strcmp(prompt, "\\@") == 0)
+		_PS1 = create_time(0);
+	else if (_strcmp(prompt, "\\a") == 0)
+		_PS1 = "\a";
+	else if (_strcmp(prompt, "\\d") == 0)
+		_PS1 = create_date();
+	else if (_strcmp(prompt, "\\H") == 0)
 	{
 		if (gethostname(hostname, WRITE_BUF_SIZE) == 0)
-			printf("%s", hostname);
+			_PS1 = hostname;
 		else
 			perror("gethostname");
 	}
-	if (_strcmp(prompt, "\\s") == 0)
-		printf("-hsh");
-	if (_strcmp(prompt, "\\u") == 0)
-	{
-		env_var = _getenv(info, "USER=");
-		printf("%s", env_var);
-	}
-	if (_strcmp(prompt, "\\w") == 0)
-	{
-		env_var = _getenv(info, "PWD=");
-		printf("%s", env_var);
-	}
+	else if (_strcmp(prompt, "\\n") == 0)
+		_PS1 = "\n";
+	else if (_strcmp(prompt, "\\s") == 0)
+		_PS1 = "-hsh";
+	else if (_strcmp(prompt, "\\t") == 0)
+		_PS1 = create_time(1);
+	else if (_strcmp(prompt, "\\u") == 0)
+		_PS1 = _getenv(info, "USER=");
+	else if (_strcmp(prompt, "\\w") == 0)
+		_PS1 = _getenv(info, "PWD=");
+	else
+		return (prompt);
+	return (_PS1);
 }

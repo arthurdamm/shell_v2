@@ -308,8 +308,8 @@ void read_startup_file(info_t *info);
 
 /* time.c */
 char *create_date(void);
+char *create_time(int);
 char *its_weekday(int);
 char *its_month(int);
-
 
 #endif

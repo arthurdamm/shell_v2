@@ -30,6 +30,41 @@ char *create_date(void)
 }
 
 /**
+ * create_time - converts tm struct integers into strings
+ * @seconds: flag for printing seconds or not
+ * Return: current time
+ */
+char *create_time(int seconds)
+{
+	struct tm *myTime;
+	time_t currentTime;
+	char *_time = NULL, *hour, *minute, *second;
+
+	time(&currentTime);
+	myTime = localtime(&currentTime);
+
+	hour = convert_number(myTime->tm_hour + 1, 10, 0);
+	minute = convert_number(myTime->tm_min, 10, 0);
+	second = convert_number(myTime->tm_sec, 10, 0);
+
+	if (_strlen(hour) < 2)
+	{
+		_time = _strdup("0");
+		_strcat(_time, hour);
+	}
+	else
+		_time = _strdup(hour);
+
+	_strcat(_time, ":");
+	_strcat(_time, minute);
+	if (seconds)
+	{
+		_strcat(_time, ":");
+		_strcat(_time, second);
+	}
+	return (_time);
+}
+/**
  * its_weekday - converts int from tm struct to string
  * @weekday_int: weekday in ints
  * Return: weekday string
@@ -39,13 +74,13 @@ char *its_weekday(int weekday_int)
 	char *weekdays[7];
 	char *weekday_string;
 
-	weekdays[1] = "Sunday";
-	weekdays[2] = "Monday";
-	weekdays[3] = "Tuesday";
-	weekdays[4] = "Wednesday";
-	weekdays[5] = "Thursday";
-	weekdays[6] = "Friday";
-	weekdays[7] = "Saturday";
+	weekdays[0] = "Sunday";
+	weekdays[1] = "Monday";
+	weekdays[2] = "Tuesday";
+	weekdays[3] = "Wednesday";
+	weekdays[4] = "Thursday";
+	weekdays[5] = "Friday";
+	weekdays[6] = "Saturday";
 
 	weekday_string = weekdays[weekday_int];
 	return (weekday_string);
