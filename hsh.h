@@ -136,6 +136,7 @@ typedef struct passinfo
 	int startup_fd;
 	int dup_stdin;
 	int dup_stdout;
+
 } info_t;
 
 #define INFO_INIT \
@@ -257,7 +258,7 @@ int populate_env_list(info_t *);
 char **get_environ(info_t *);
 int _unsetenv(info_t *, char *);
 int _setenv(info_t *, char *, char *);
-void print_prompt(info_t *, char *);
+char *print_prompt(info_t *, char *);
 
 /* file_io_functions.c */
 char *get_history_file(info_t *info);
@@ -305,6 +306,10 @@ void print_error_noarg(info_t *info, char *estr);
 int open_file(info_t *info, char *name, int silent);
 void read_startup_file(info_t *info);
 
+/* time.c */
+char *create_date(void);
+char *its_weekday(int);
+char *its_month(int);
 
 
 #endif
