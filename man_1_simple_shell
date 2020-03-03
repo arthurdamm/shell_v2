@@ -14,10 +14,20 @@ In addition to searching the path, the following features are supported.
    setenv - Set a new environment variable
    unsetenv - Unset an environment variable
    cd - Change directories
+   help - Prints help for built-ins
+   history - Displays numbered history list and prints to history file on exit
    Ctrl-D - End of file: exit shell
    Ctrl-C - Does NOT exit shell
    ; - Command separator for command chaining
    # - Comment indicator
+   && - AND Logical operator
+   || - OR Logical operator
+   < << >> > - Left and Right stream redirection
+   | - Pipe stream redirection
+   $? $$ - variable replacement   
+   FILE - Can take a file as command line argument
+   $PS1 - Customizable PS1 prompt variable
+
 .SH EXAMPLE USAGE
 cd -
 
@@ -27,17 +37,13 @@ ls -l
 
 exit 98
 
+help -d
+
 .SH LIMITATIONS
 Word length - Buffers of 1024 characacters are used in several aspects of the shell. Excessively long filenames or paths may cause errors.
 .SH BUGS
 No known bugs at this time.
 .SH AUTHORS
-Written by Arthur Damm and Jason Cortella
+Written by Arthur Damm, Jason Cortella, Thomas Graeff
 .SH IN PROGRESS
 The following features are currently in progress
-    && and || operators
-    aliases
-    variable replacements
-    help
-    history
-    taking a file as input
