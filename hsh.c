@@ -22,7 +22,7 @@ int hsh(info_t *info, char **av)
 			if (prompt != NULL)
 				print_prompt(info, prompt);
 			else
-				printf("$ ");
+				_puts("$ ");
 		}
 		_eputchar(BUF_FLUSH);
 		r = get_input(info);

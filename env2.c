@@ -98,7 +98,7 @@ int _setenv(info_t *info, char *var, char *value)
  * @prompt: prompt given
  * Return: void
  */
-char *print_prompt(info_t *info, char *prompt)
+void print_prompt(info_t *info, char *prompt)
 {
 	char hostname[WRITE_BUF_SIZE + 1];
 	char *_PS1 = NULL;
@@ -129,6 +129,6 @@ char *print_prompt(info_t *info, char *prompt)
 	else if (_strcmp(prompt, "\\w") == 0)
 		_PS1 = _getenv(info, "PWD=");
 	else
-		return (prompt);
-	return (_PS1);
+		printf("%s", prompt);
+	printf("%s", _PS1);
 }
