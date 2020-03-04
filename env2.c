@@ -95,40 +95,45 @@ int _setenv(info_t *info, char *var, char *value)
 /**
  * print_prompt - prints PS1 if exists
  * @info: info struct
- * @prompt: prompt given
  * Return: void
  */
-void print_prompt(info_t *info, char *prompt)
+void print_prompt(info_t *info)
 {
 	char hostname[WRITE_BUF_SIZE + 1];
-	char *_PS1 = NULL;
+	char *_PS1 = NULL, *prompt = NULL;
 
-	if (_strcmp(prompt, "\\!") == 0)
-		_PS1 = convert_number(info->histcount, 10, 0);
-	else if (_strcmp(prompt, "\\@") == 0)
-		_PS1 = create_time(0);
-	else if (_strcmp(prompt, "\\a") == 0)
-		_PS1 = "\a";
-	else if (_strcmp(prompt, "\\d") == 0)
-		_PS1 = create_date();
-	else if (_strcmp(prompt, "\\H") == 0)
-	{
-		if (gethostname(hostname, WRITE_BUF_SIZE) == 0)
-			_PS1 = hostname;
-		else
-			perror("gethostname");
-	}
-	else if (_strcmp(prompt, "\\n") == 0)
-		_PS1 = "\n";
-	else if (_strcmp(prompt, "\\s") == 0)
-		_PS1 = "-hsh";
-	else if (_strcmp(prompt, "\\t") == 0)
-		_PS1 = create_time(1);
-	else if (_strcmp(prompt, "\\u") == 0)
-		_PS1 = _getenv(info, "USER=");
-	else if (_strcmp(prompt, "\\w") == 0)
-		_PS1 = _getenv(info, "PWD=");
+	prompt = _getenv(info, "PS1=");
+	if (!prompt)
+		_puts("$ ");
 	else
-		printf("%s", prompt);
-	printf("%s", _PS1);
+	{
+		if (_strcmp(prompt, "\\!") == 0)
+			_PS1 = convert_number(info->histcount, 10, 0);
+		else if (_strcmp(prompt, "\\@") == 0)
+			_PS1 = create_time(0);
+		else if (_strcmp(prompt, "\\a") == 0)
+			_PS1 = "\a";
+		else if (_strcmp(prompt, "\\d") == 0)
+			_PS1 = create_date();
+		else if (_strcmp(prompt, "\\H") == 0)
+		{
+			if (gethostname(hostname, WRITE_BUF_SIZE) == 0)
+				_PS1 = hostname;
+			else
+				perror("gethostname");
+		}
+		else if (_strcmp(prompt, "\\n") == 0)
+			_PS1 = "\n";
+		else if (_strcmp(prompt, "\\s") == 0)
+			_PS1 = "-hsh";
+		else if (_strcmp(prompt, "\\t") == 0)
+			_PS1 = create_time(1);
+		else if (_strcmp(prompt, "\\u") == 0)
+			_PS1 = _getenv(info, "USER=");
+		else if (_strcmp(prompt, "\\w") == 0)
+			_PS1 = _getenv(info, "PWD=");
+		else
+			_puts(prompt);
+		_puts(_PS1);
+	}
 }

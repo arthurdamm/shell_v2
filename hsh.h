@@ -258,7 +258,7 @@ int populate_env_list(info_t *);
 char **get_environ(info_t *);
 int _unsetenv(info_t *, char *);
 int _setenv(info_t *, char *, char *);
-void print_prompt(info_t *, char *);
+void print_prompt(info_t *);
 
 /* file_io_functions.c */
 char *get_history_file(info_t *info);
