@@ -116,7 +116,7 @@ int _myhelp(info_t *info)
 	else
 	{
 		printf("-bash: help: no help topics match `%s'.", builtin);
-		printf("  Try `help help' or `man -k %s' or `info %s'.\n", arg[1], arg[1]);
+		printf("  Try `help help' or `man -k %s' or `info %s'.\n", builtin, builtin);
 		info->status = 1;
 		return (1);
 	}
