@@ -23,7 +23,7 @@ The shell handles command line input, including arguements, without the use of m
 | `history`			 | Prints command history					   |
 | `help` 			 | Displays help for builtin commands		   |
 | `alias`			 | Alias a command as another or print aliases |
-|					 | 											   |
+
 |  Other Features    |    Functionality                            |
 | ------------------ | ------------------------------------------- |
 | `Ctrl-D`           | End of file - exit shell                    |
@@ -49,6 +49,6 @@ The shell handles command line input, including arguements, without the use of m
 All files were created and compiled on `Ubuntu 14.04.4 LTS` using `GCC 4.8.4` with the following flags: `-Wall -Werror -Wextra -pedantic`
 
 ### Authors
-Jason Cortella [Github](https://github.com/jasoncortella) - [Twitter](https://twitter.com/JasonCortella)
-Arthur Damm [Github](https://github.com/arthurdamm) - [Twitter](https://twitter.com/arthurdamm)
-Thomas Graeff [Github](https://github.com/graefft)
+* Jason Cortella [Github](https://github.com/jasoncortella) - [Twitter](https://twitter.com/JasonCortella)
+* Arthur Damm [Github](https://github.com/arthurdamm) - [Twitter](https://twitter.com/arthurdamm)
+* Thomas Graeff [Github](https://github.com/graefft)
