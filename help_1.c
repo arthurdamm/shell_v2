@@ -92,7 +92,7 @@ void help_help(info_t *info)
 	if (info->help && _strcmp(info->help, "s") == 0)
 		printf("help: help [-dms] [pattern ...]\n");
 	else if (info->help && _strcmp(info->help, "d") == 0)
-		printf("help - Display information about builtin commands.\n")
+		printf("help - Display information about builtin commands.\n");
 	else
 	{
 		printf("help: help [-dms] [pattern ...]\n");
