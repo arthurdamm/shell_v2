@@ -91,3 +91,45 @@ int _setenv(info_t *info, char *var, char *value)
 	info->env_changed = 1;
 	return (0);
 }
+
+/**
+ * print_prompt - prints PS1 if exists
+ * @info: info struct
+ * Return: void
+ */
+void print_prompt(info_t *info)
+{
+	char hostname[WRITE_BUF_SIZE + 1];
+	char *_PS1 = NULL, *prompt = NULL;
+
+	prompt = _getenv(info, "PS1=");
+	if (!prompt)
+		_puts("$ ");
+	else
+	{
+		if (_strcmp(prompt, "\\!") == 0)
+			_PS1 = convert_number(info->histcount, 10, 0);
+		else if (_strcmp(prompt, "\\a") == 0)
+			_PS1 = "\a";
+		else if (_strcmp(prompt, "\\d") == 0)
+			_PS1 = create_date();
+		else if (_strcmp(prompt, "\\H") == 0)
+		{
+			if (gethostname(hostname, WRITE_BUF_SIZE) == 0)
+				_PS1 = hostname;
+			else
+				perror("gethostname");
+		}
+		else if (_strcmp(prompt, "\\n") == 0)
+			_PS1 = "\n";
+		else if (_strcmp(prompt, "\\s") == 0)
+			_PS1 = "-hsh";
+		else if (_strcmp(prompt, "\\u") == 0)
+			_PS1 = _getenv(info, "USER=");
+		else if (_strcmp(prompt, "\\w") == 0)
+			_PS1 = _getenv(info, "PWD=");
+		else
+			_puts(prompt);
+		_puts(_PS1);
+	}
+}

@@ -97,8 +97,7 @@ int _myhelp(info_t *info)
 		return (0);
 	}
 	builtin = help_flag_check(info, arg);
-	if (!builtin)
-		return (0);
+	
 	if (_strcmp(builtin, "alias") == 0)
 		help_alias(info);
 	else if (_strcmp(builtin, "cd") == 0)
