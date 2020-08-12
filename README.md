@@ -50,5 +50,6 @@ All files were created and compiled on `Ubuntu 14.04.4 LTS` using `GCC 4.8.4` wi
 
 ### Authors
 * Jason Cortella [Github](https://github.com/jasoncortella) - [Twitter](https://twitter.com/JasonCortella)
-* Arthur Damm [Github](https://github.com/arthurdamm) - [Twitter](https://twitter.com/arthurdamm)
+* [Arthur Damm](https://github.com/arthurdamm/twodoor) ~ [LinkedIn](https://www.linkedin.com/in/arthur-damm-96527042/) ~ [@arthurdamm](https://twitter.com/arthurdamm):
+*Sharpening my skills at Holberton School of Software Engineering. I have a lifelong passion for programming with a background in mathematics and a daily meditation practice. Spent the last several years enjoying working as a private tutor and am now excited to practice software wizardry professionally.*
 * Thomas Graeff [Github](https://github.com/graefft)
