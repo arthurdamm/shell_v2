@@ -1,5 +1,7 @@
 # simple shellv2
 
+![shellv2-screenshot](https://github.com/arthurdamm/shell_v2/blob/master/img/shellv2_screenshot.png)
+
 ### Overview
 `simple shell` is a UNIX command interpreter that replicates core functionalities of the `sh` shell. This project was developed as part of the third month curriculum at [Holberton School](https://www.\holbertonschool.com/), San Francisco.
 
